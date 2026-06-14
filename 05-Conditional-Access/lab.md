@@ -130,3 +130,71 @@ Planned remediation steps:
 6. Require MFA for Microsoft Azure Management.
 7. Test sign-in behaviour.
 8. Validate Conditional Access result in sign-in logs.
+
+Session Controls
+
+No session controls were configured.
+
+The objective of the lab was to demonstrate MFA enforcement using Conditional Access. Session controls were intentionally left unconfigured to keep the policy focused on authentication requirements.
+
+## Policy Deployment Strategy
+
+The Conditional Access policy was initially deployed in Report-only mode.
+
+This allowed policy behaviour to be evaluated without impacting users. Once validation was completed using the What If tool and sign-in logs, the policy was transitioned to Enforced mode.
+
+This approach aligns with Microsoft recommended Conditional Access deployment practices and reduces the risk of unintended authentication disruptions.
+
+Target Resource: Microsoft Admin Portals
+
+Reason:
+Microsoft Admin Portals was selected as the protected cloud application because it provides access to administrative interfaces including Microsoft Entra Admin Center and Microsoft 365 Admin Center.
+
+Requiring MFA for administrative access aligns with Zero Trust security principles and helps reduce the risk of unauthorized privileged access.
+
+### Conditional Access What If Evaluation
+
+The What If tool presented a different resource catalog than the Conditional Access policy creation wizard.
+
+While the policy was configured to protect Microsoft Admin Portals, the What If interface did not expose the same application name. The closest available administrative application, Microsoft Office 365 Portal, was used for simulation purposes.
+
+Final validation was performed using actual sign-in testing and Microsoft Entra sign-in logs.
+
+## Security Defaults Conflict
+
+When attempting to change the Conditional Access policy from Report-only mode to Enabled, Microsoft Entra returned an error indicating that Security Defaults must first be disabled.
+
+### Observation
+
+Security Defaults and Conditional Access cannot be used simultaneously to enforce authentication controls.
+
+### Root Cause
+
+The tenant had Security Defaults enabled.
+
+### Impact
+
+Conditional Access policies could not be enforced despite successful policy creation and What If validation.
+
+### Resolution
+
+Security Defaults must be disabled before Conditional Access policies can be enabled.
+
+### Evidence
+
+18-security-defaults-conflict.png
+
+## Security Defaults Remediation
+
+To enable Conditional Access enforcement, Security Defaults were disabled.
+
+Reason selected:
+
+- My organization is planning to use Conditional Access
+
+This change allows Conditional Access policies to become the primary authentication and authorization control mechanism for the tenant.
+
+Evidence:
+
+- 19-security-defaults-disabled.png
+
