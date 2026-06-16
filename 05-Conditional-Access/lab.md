@@ -2,13 +2,13 @@
 
 ## Objective
 
-Create and validate a Microsoft Entra Conditional Access policy that requires multifactor authentication for a dedicated test user.
+Implement and validate a Microsoft Entra Conditional Access policy that requires Multifactor Authentication (MFA) for a dedicated test user, while documenting the end-to-end deployment, troubleshooting, validation and remediation process.
 
 ## Scenario
 
-A test user requires access to Microsoft Azure Management. To improve identity security, a Conditional Access policy will be configured to require MFA before access is granted.
+A dedicated test user was created to access Azure administrative resources. To improve identity security and align with Zero Trust principles, a Conditional Access policy was implemented to require MFA before access to administrative resources is granted.
 
-This lab also documents real-world troubleshooting performed during implementation, including licensing requirements, user visibility issues and tenant alignment investigation.
+During implementation, several real-world challenges were encountered, including licensing requirements, tenant alignment issues, user visibility problems and Security Defaults conflicts. These issues were investigated and documented as part of the lab.
 
 ## Azure Services Used
 
@@ -16,54 +16,58 @@ This lab also documents real-world troubleshooting performed during implementati
 - Conditional Access
 - Microsoft Entra Suite Trial
 - Microsoft 365 Admin Center
-- Multifactor Authentication
-- Sign-in Logs
+- Multifactor Authentication (MFA)
+- Microsoft Entra Sign-in Logs
+- What If Policy Evaluation Tool
 
 ---
 
 ## Phase 1 – Initial Setup and Issue Identification
 
-A dedicated test user named `AZ500 CA Test User` was created for the Conditional Access lab.
+A dedicated test user named `AZ500 CA Test User` was created for the Conditional Access implementation.
 
-When attempting to create a Conditional Access policy, the Conditional Access page showed that the tenant did not have sufficient licensing to use the feature.
+While attempting to create the Conditional Access policy, Microsoft Entra displayed a licensing requirement indicating that the tenant did not have sufficient licensing to use Conditional Access.
 
-Conditional Access required Microsoft Entra Premium licensing. To resolve this, a Microsoft Entra Suite trial subscription was activated.
+To satisfy this requirement, a Microsoft Entra Suite trial subscription was activated.
 
 ---
 
 ## Challenge Encountered
 
-After activating the Microsoft Entra Suite trial, an attempt was made to assign the license to the original test user.
+Following activation of the Microsoft Entra Suite trial, an attempt was made to assign the license to the original test user.
 
-However, the test user could not be found in the Microsoft 365 Admin Center license assignment interface.
+Unexpectedly, the user could not be located within the Microsoft 365 Admin Center license assignment interface.
 
-Further investigation showed that there were different accounts and tenant domains involved during the lab:
+Further investigation identified that different tenant domains were involved during the lab implementation process.
 
-- The original test user was created under one tenant/domain.
-- The Microsoft Entra Suite trial appeared under another tenant/domain.
+This introduced a potential tenant alignment issue between:
 
-This created a possible tenant alignment issue.
+- The original test user account.
+- The tenant hosting the Microsoft Entra Suite trial subscription.
 
 ---
 
-## Troubleshooting Performed
+## Troubleshooting Activities Performed
 
-1. Verified that the test user was successfully created in Microsoft Entra ID.
-2. Confirmed that the test user account was enabled.
-3. Attempted to access Conditional Access.
-4. Identified the Microsoft Entra Premium licensing requirement.
-5. Activated the Microsoft Entra Suite trial.
-6. Attempted to assign the license to the test user.
-7. Confirmed that the test user did not appear in the licensing assignment picker.
-8. Checked the user license page and confirmed no license was assigned.
-9. Investigated account and directory relationships.
-10. Identified possible tenant/directory misalignment or Microsoft 365 synchronization delay.
+The following troubleshooting activities were completed:
+
+1. Verified successful creation of the test user in Microsoft Entra ID.
+2. Confirmed the user account was enabled.
+3. Attempted Conditional Access configuration.
+4. Identified Microsoft Entra Premium licensing requirements.
+5. Activated Microsoft Entra Suite trial licensing.
+6. Attempted license assignment.
+7. Confirmed the user did not appear in the licensing assignment interface.
+8. Reviewed user licensing information.
+9. Investigated account and tenant relationships.
+10. Performed tenant alignment validation.
+11. Identified potential tenant mismatch and synchronization dependencies.
 
 ---
 
 ## Troubleshooting Workflow
 
-The following diagram documents the investigation process.
+The troubleshooting process is documented in the attached investigation flowchart.
 
 ![Conditional Access Troubleshooting Workflow](screenshots/07-conditional-access-lab-troubleshooting.png)
 
@@ -71,46 +75,71 @@ The following diagram documents the investigation process.
 
 ## Root Cause Analysis
 
-The exact root cause was not fully confirmed at this stage.
-
-The most likely contributing factors were:
+Although a single definitive root cause could not be confirmed, the investigation identified two likely contributing factors.
 
 | Potential Root Cause | Description |
 |---|---|
-| Tenant / Directory Misalignment | The test user and Microsoft Entra Suite trial appeared to be associated with different tenant domains. |
-| Synchronization Delay | The newly created user may not have fully synchronized from Microsoft Entra ID to Microsoft 365 licensing services. |
+| Tenant / Directory Misalignment | The original test user and Microsoft Entra Suite trial subscription were associated with different tenant contexts. |
+| Synchronization Delay | Microsoft Entra ID and Microsoft 365 licensing services may not have completed synchronization when license assignment was attempted. |
 
 ---
 
 ## Investigation Outcome
 
-The investigation showed that Conditional Access implementation depends not only on policy configuration, but also on licensing availability, tenant alignment, user provisioning and Microsoft 365 service synchronization.
+The investigation highlighted that successful Conditional Access implementation depends on more than policy creation alone.
 
-To continue the lab safely, the next step is to create a new test user inside the same tenant where the Microsoft Entra Suite trial subscription exists.
+Key dependencies include:
 
----
+- Licensing availability
+- Correct tenant alignment
+- User provisioning
+- Microsoft 365 synchronization
+- Identity administration
 
-## Evidence Captured – Troubleshooting Phase
-
-Screenshots are stored in the `screenshots` folder.
-
-- `01-test-user-created.png`
-- `02-conditional-access-license-required.png`
-- `03-entra-suite-trial-activated.png`
-- `04-license-assignment-user-not-found.png`
-- `05-account-directory-investigation.png`
-- `06-user-license-page-empty.png`
-- `07-conditional-access-lab-troubleshooting.png`
+To continue the implementation, a new test user was created within the same tenant that hosted the Microsoft Entra Suite subscription.
 
 ---
 
-## Lessons Learned
+## Phase 2 – Remediation and Recovery
+
+A new test user was created within the licensed tenant environment.
+
+The following remediation activities were completed:
+
+1. Created a replacement test user within the licensed tenant.
+2. Assigned Microsoft Entra Suite licensing.
+3. Verified successful license assignment.
+4. Confirmed license visibility within Microsoft Entra ID.
+5. Continued Conditional Access implementation using the licensed test account.
+
+This approach eliminated tenant alignment concerns and allowed the project to proceed.
+
+---
+
+## Phase 3 – Conditional Access Policy Configuration
 
 - Conditional Access requires Microsoft Entra Premium licensing.
 - Microsoft cloud security features can depend on licensing and tenant configuration.
 - User creation in Microsoft Entra ID does not always immediately guarantee visibility in Microsoft 365 licensing services.
 - Tenant alignment is important when assigning licenses and implementing identity security controls.
 - Troubleshooting and evidence collection are important parts of security implementation work.
+
+Phase 3 – Conditional Access Policy Configuration
+
+A Conditional Access policy named:
+
+CA-LAB-Require-MFA-Test-User
+
+was created.
+
+Configuration Summary
+Setting	Value
+Users	Specific Test User
+Target Resource	Microsoft Admin Portals
+Grant Control	Require Multifactor Authentication
+Conditions	None
+Session Controls	None
+Initial Deployment Mode	Report-only
 
 ---
 
