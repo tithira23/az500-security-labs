@@ -71,6 +71,19 @@ The troubleshooting process is documented in the attached investigation flowchar
 
 ![Conditional Access Troubleshooting Workflow](screenshots/07-conditional-access-lab-troubleshooting.png)
 
+The investigation began after Conditional Access licensing requirements were identified during policy creation.
+
+The troubleshooting process focused on validating:
+
+- Test user creation
+- Licensing availability
+- License assignment
+- Tenant alignment
+- Directory synchronization
+- Conditional Access prerequisites
+
+The investigation identified that the original test user and the Microsoft Entra Suite trial subscription were likely associated with different tenant contexts, preventing successful license assignment.
+
 ---
 
 ## Root Cause Analysis
@@ -100,130 +113,241 @@ To continue the implementation, a new test user was created within the same tena
 
 ---
 
-## Phase 2 – Remediation and Recovery
+# Phase 2 – Correct Tenant Selection and User Recreation
 
-A new test user was created within the licensed tenant environment.
+Following the tenant alignment investigation, the correct Microsoft Entra tenant associated with the Microsoft Entra Suite trial subscription was identified and selected.
 
-The following remediation activities were completed:
+![Correct Tenant Selected](screenshots/08-correct-tenant-selected.png)
 
-1. Created a replacement test user within the licensed tenant.
-2. Assigned Microsoft Entra Suite licensing.
-3. Verified successful license assignment.
-4. Confirmed license visibility within Microsoft Entra ID.
-5. Continued Conditional Access implementation using the licensed test account.
+A new test user was created within the licensed tenant to ensure licensing and Conditional Access features could be applied correctly.
 
-This approach eliminated tenant alignment concerns and allowed the project to proceed.
+![New Test User Created](screenshots/09-new-test-user-created-in-licensed-tenant.png)
+
+The Microsoft Entra Suite license was then successfully assigned.
+
+![License Assigned Successfully](screenshots/10-license-assigned-successfully.png)
+
+License assignment was verified through the user licensing page.
+
+![User License Verified](screenshots/11-user-license-verified.png)
 
 ---
 
-## Phase 3 – Conditional Access Policy Configuration
-
-- Conditional Access requires Microsoft Entra Premium licensing.
-- Microsoft cloud security features can depend on licensing and tenant configuration.
-- User creation in Microsoft Entra ID does not always immediately guarantee visibility in Microsoft 365 licensing services.
-- Tenant alignment is important when assigning licenses and implementing identity security controls.
-- Troubleshooting and evidence collection are important parts of security implementation work.
-
-Phase 3 – Conditional Access Policy Configuration
+# Phase 3 – Conditional Access Policy Configuration
 
 A Conditional Access policy named:
 
-CA-LAB-Require-MFA-Test-User
+**CA-LAB-Require-MFA-Test-User**
 
 was created.
 
-Configuration Summary
-Setting	Value
-Users	Specific Test User
-Target Resource	Microsoft Admin Portals
-Grant Control	Require Multifactor Authentication
-Conditions	None
-Session Controls	None
-Initial Deployment Mode	Report-only
+## Configuration Summary
+
+| Setting | Value |
+|----------|----------|
+| Users | Specific Test User |
+| Target Resource | Microsoft Admin Portals |
+| Grant Control | Require Multifactor Authentication |
+| Conditions | None |
+| Session Controls | None |
+| Initial Deployment Mode | Report-only |
 
 ---
 
-## Phase 2 – Remediation Plan
+### User Assignment
 
-To continue the lab, a new test user will be created in the same tenant where the Microsoft Entra Suite trial subscription was activated.
+The dedicated test user was selected.
 
-The new test user will then be assigned a Microsoft Entra Suite license and used to complete the Conditional Access MFA policy implementation.
+![Policy User Selected](screenshots/12-ca-policy-user-selected.png)
 
-Planned remediation steps:
+---
 
-1. Create a new test user in the licensed tenant.
-2. Assign Microsoft Entra Suite license to the new test user.
-3. Confirm license assignment.
-4. Create Conditional Access policy.
-5. Scope the policy to the new test user only.
-6. Require MFA for Microsoft Azure Management.
-7. Test sign-in behaviour.
-8. Validate Conditional Access result in sign-in logs.
+### Target Resource Selection
 
-Session Controls
+The policy was configured to protect Microsoft administrative portals.
 
-No session controls were configured.
+![Target Resource Selected](screenshots/13-ca-policy-target-resource.png)
 
-The objective of the lab was to demonstrate MFA enforcement using Conditional Access. Session controls were intentionally left unconfigured to keep the policy focused on authentication requirements.
+---
 
-## Policy Deployment Strategy
+### Grant Control Configuration
 
-The Conditional Access policy was initially deployed in Report-only mode.
+The policy was configured to require Multifactor Authentication.
 
-This allowed policy behaviour to be evaluated without impacting users. Once validation was completed using the What If tool and sign-in logs, the policy was transitioned to Enforced mode.
+![Grant Control Configuration](screenshots/14-ca-policy-mfa-grant-control.png)
 
-This approach aligns with Microsoft recommended Conditional Access deployment practices and reduces the risk of unintended authentication disruptions.
+---
 
-Target Resource: Microsoft Admin Portals
+### Initial Report-Only Deployment
 
-Reason:
-Microsoft Admin Portals was selected as the protected cloud application because it provides access to administrative interfaces including Microsoft Entra Admin Center and Microsoft 365 Admin Center.
+The policy was initially deployed in Report-only mode to safely validate its impact.
 
-Requiring MFA for administrative access aligns with Zero Trust security principles and helps reduce the risk of unauthorized privileged access.
+![Policy Report Only](screenshots/15-ca-policy-report-only.png)
 
-### Conditional Access What If Evaluation
+---
 
-The What If tool presented a different resource catalog than the Conditional Access policy creation wizard.
+# Phase 4 – Policy Validation Using What If Tool
 
-While the policy was configured to protect Microsoft Admin Portals, the What If interface did not expose the same application name. The closest available administrative application, Microsoft Office 365 Portal, was used for simulation purposes.
+The Microsoft Entra What If tool was used to simulate a sign-in attempt and evaluate Conditional Access policy behavior before enforcement.
 
-Final validation was performed using actual sign-in testing and Microsoft Entra sign-in logs.
+## What If Configuration
 
-## Security Defaults Conflict
+| Setting | Value |
+|----------|----------|
+| User | AZ500 CA Test User 2 |
+| Cloud Application | Azure Resource Manager |
+| Device Platform | Windows |
+| Client Application | Browser |
 
-When attempting to change the Conditional Access policy from Report-only mode to Enabled, Microsoft Entra returned an error indicating that Security Defaults must first be disabled.
+![What If Configuration](screenshots/16-what-if-configuration.png)
 
-### Observation
+---
 
-Security Defaults and Conditional Access cannot be used simultaneously to enforce authentication controls.
+### What If Results
 
-### Root Cause
+The simulation confirmed that the Conditional Access policy would apply to the selected user.
 
-The tenant had Security Defaults enabled.
+The evaluation identified:
 
-### Impact
+- Policy matched
+- MFA required
+- Policy state = Report-only
 
-Conditional Access policies could not be enforced despite successful policy creation and What If validation.
+![What If Tool Result](screenshots/17-what-if-tool-result.png)
 
-### Resolution
+---
 
-Security Defaults must be disabled before Conditional Access policies can be enabled.
+# Phase 5 – Security Defaults Conflict Resolution
 
-### Evidence
+When enabling the Conditional Access policy, Microsoft Entra displayed a conflict indicating that Security Defaults must be disabled before Conditional Access policies can be enforced.
 
-18-security-defaults-conflict.png
+![Security Defaults Conflict](screenshots/18-security-defaults-conflict.png)
 
-## Security Defaults Remediation
+This behavior is expected because:
 
-To enable Conditional Access enforcement, Security Defaults were disabled.
+- Security Defaults already enforce baseline identity protection controls.
+- Conditional Access provides granular policy-based controls.
+- Both mechanisms cannot be actively enforced simultaneously.
+
+To proceed with Conditional Access testing, Security Defaults were disabled.
 
 Reason selected:
 
-- My organization is planning to use Conditional Access
+**My organization is planning to use Conditional Access.**
 
-This change allows Conditional Access policies to become the primary authentication and authorization control mechanism for the tenant.
+![Security Defaults Disabled](screenshots/19-security-defaults-disabled.png)
 
-Evidence:
+---
 
-- 19-security-defaults-disabled.png
+# Phase 6 – Conditional Access Policy Enforcement
 
+Following Security Defaults remediation, the Conditional Access policy was switched from Report-only mode to On.
+
+The policy was then saved and enabled successfully.
+
+![Conditional Access Policy Enabled](screenshots/20-ca-policy-enabled.png)
+
+---
+
+# Phase 7 – MFA Validation
+
+The test user signed in and was prompted to complete Multifactor Authentication registration.
+
+![MFA Registration Prompt](screenshots/21-mfa-registration-or-prompt.png)
+
+The MFA registration process was completed successfully.
+
+![MFA Registration Completed](screenshots/22-mfa-registration-completed.png)
+
+---
+
+# Phase 8 – Validation Through Sign-In Logs
+
+Microsoft Entra sign-in logs were reviewed to validate authentication activity.
+
+The logs confirmed:
+
+- Successful authentication
+- MFA challenge performed
+- Conditional Access evaluation completed
+
+![Sign-In Log Validation](screenshots/23-sign-in-log-validation.png)
+
+---
+
+# Phase 9 – Conditional Access Policy Verification
+
+Final validation confirmed that the Conditional Access policy was applied successfully to the target user.
+
+Policy outcomes verified:
+
+- User targeted correctly
+- Resource targeted correctly
+- MFA enforced
+- Policy evaluated successfully
+- Sign-in completed after MFA
+
+![Conditional Access Policy Applied](screenshots/24-conditional-access-policy-applied.png)
+
+---
+
+# Cleanup Activities
+
+After successful validation, the lab environment was reviewed and cleanup activities were performed.
+
+Activities included:
+
+- Reviewing test accounts
+- Reviewing policy configuration
+- Documenting outcomes
+- Preserving evidence for future reference
+
+![Policy Cleanup](screenshots/25-policy-cleanup.png)
+
+---
+
+# Key Lessons Learned
+
+This lab demonstrated that successful Conditional Access deployment requires more than policy creation.
+
+Important dependencies include:
+
+- Microsoft Entra Premium licensing
+- Tenant and directory alignment
+- User provisioning and synchronization
+- Security Defaults configuration
+- Policy validation using the What If tool
+- MFA registration workflows
+- Sign-in log analysis
+
+The troubleshooting process highlighted the importance of methodical investigation and evidence-based validation when implementing identity security controls.
+
+---
+
+# Security Concepts Demonstrated
+
+- Conditional Access
+- Multifactor Authentication (MFA)
+- Identity Protection
+- Zero Trust Principles
+- Microsoft Entra ID Administration
+- Microsoft Entra Licensing
+- Security Defaults
+- Policy Simulation and Validation
+- Authentication Monitoring
+- Sign-In Log Analysis
+
+---
+
+# Outcome
+
+Successfully implemented and validated a Microsoft Entra Conditional Access policy requiring Multifactor Authentication for a dedicated test user.
+
+The lab additionally documented a real-world troubleshooting scenario involving:
+
+- Licensing prerequisites
+- Tenant alignment challenges
+- User visibility issues
+- Security Defaults conflicts
+
+The final solution resulted in successful MFA enforcement and Conditional Access validation through policy simulation and sign-in log analysis.
