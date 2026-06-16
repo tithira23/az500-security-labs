@@ -69,7 +69,7 @@ The following troubleshooting activities were completed:
 
 The troubleshooting process is documented in the attached investigation flowchart.
 
-![Conditional Access Troubleshooting Workflow](screenshots/07-conditional-access-lab-troubleshooting.png)
+![Conditional Access Troubleshooting Workflow](screenshots/07-conditional-access-troubleshooting-workflow.png)
 
 The investigation began after Conditional Access licensing requirements were identified during policy creation.
 
