@@ -4,6 +4,24 @@
 
 Implement and validate a Microsoft Entra Conditional Access policy that requires Multifactor Authentication (MFA) for a dedicated test user, while documenting the end-to-end deployment, troubleshooting, validation and remediation process.
 
+## Lab Workflow
+
+The following workflow summarizes the implementation process.
+
+1. Create test user
+2. Identify Conditional Access licensing requirement
+3. Activate Microsoft Entra Suite trial
+4. Troubleshoot tenant alignment issue
+5. Create licensed test user
+6. Assign license
+7. Create Conditional Access policy
+8. Validate using What If tool
+9. Resolve Security Defaults conflict
+10. Enable policy
+11. Complete MFA registration
+12. Validate sign-in logs
+13. Confirm policy enforcement
+
 ## Scenario
 
 A dedicated test user was created to access Azure administrative resources. To improve identity security and align with Zero Trust principles, a Conditional Access policy was implemented to require MFA before access to administrative resources is granted.
@@ -306,6 +324,22 @@ Activities included:
 
 ---
 
+## Skills Demonstrated
+
+- Microsoft Entra ID Administration
+- Conditional Access Policy Management
+- Multifactor Authentication (MFA)
+- Identity and Access Management (IAM)
+- Microsoft Entra Licensing
+- Tenant Administration
+- Security Troubleshooting
+- Root Cause Analysis
+- Authentication Monitoring
+- Sign-In Log Analysis
+- Zero Trust Security Controls
+
+---
+
 # Key Lessons Learned
 
 This lab demonstrated that successful Conditional Access deployment requires more than policy creation.
@@ -343,11 +377,8 @@ The troubleshooting process highlighted the importance of methodical investigati
 
 Successfully implemented and validated a Microsoft Entra Conditional Access policy requiring Multifactor Authentication for a dedicated test user.
 
-The lab additionally documented a real-world troubleshooting scenario involving:
+During implementation, multiple real-world issues were identified and resolved, including licensing prerequisites, tenant alignment challenges, user visibility issues and Security Defaults conflicts.
 
-- Licensing prerequisites
-- Tenant alignment challenges
-- User visibility issues
-- Security Defaults conflicts
+The final solution successfully enforced MFA, validated Conditional Access policy application through the What If tool and confirmed policy effectiveness using Microsoft Entra sign-in logs.
 
-The final solution resulted in successful MFA enforcement and Conditional Access validation through policy simulation and sign-in log analysis.
+This lab demonstrates practical experience with identity security administration, Conditional Access deployment, troubleshooting methodology and Zero Trust access controls.
