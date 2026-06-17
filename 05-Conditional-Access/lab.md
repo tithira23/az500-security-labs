@@ -36,7 +36,8 @@ During implementation, several real-world challenges were encountered, including
 - Microsoft 365 Admin Center
 - Multifactor Authentication (MFA)
 - Microsoft Entra Sign-in Logs
-- What If Policy Evaluation Tool
+- Microsoft Entra What If Tool
+- Security Defaults
 
 ---
 
